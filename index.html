@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Journal de Santé Mentale</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: #ffffff;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            max-width: 400px;
+            text-align: center;
+            position: relative;
+        }
+        h1 {
+            font-size: 24px;
+            color: #333;
+        }
+        h2 {
+            font-size: 20px;
+            color: #555;
+            margin-bottom: 15px;
+        }
+        .profile-selection {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .profile input[type="radio"] {
+            transform: scale(1.5);
+        }
+        .profile label {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .tags, .secondary-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+            justify-content: center;
+        }
+        .tag {
+            background: #e0e0e0;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+        .tag.selected {
+            background: #007BFF;
+            color: #fff;
+        }
+        button {
+            background: #4caf50;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .hidden {
+            display: none;
+        }
+        .reset-button {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: #FF5733;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .reset-button:hover {
+            background: #e74c3c;
+        }
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            resize: none;
+            display: none;
+        }
+        textarea.visible {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Comment te sens-tu aujourd'hui ?</h1>
+        <h2>Qui est-ce ?</h2>
+        <div class="profile-selection">
+            <div class="profile">
+                <input type="radio" id="lea" name="profile" value="Léa">
+                <label for="lea" style="color: #FF69B4;">Léa</label>
+            </div>
+            <div class="profile">
+                <input type="radio" id="thyann" name="profile" value="Thyann">
+                <label for="thyann" style="color: #007BFF;">Thyann</label>
+            </div>
+        </div>
+
+        <div class="tags">
+            <div class="tag" onclick="selectCategory(this, 'Super !')">SUPER !</div>
+            <div class="tag" onclick="selectCategory(this, 'Ça va')">ÇA VA</div>
+            <div class="tag" onclick="selectCategory(this, 'Neutre')">NEUTRE</div>
+            <div class="tag" onclick="selectCategory(this, 'Ça va pas trop')">ÇA VA PAS TROP</div>
+            <div class="tag" onclick="selectCategory(this, 'Ça va pas du tout')">ÇA VA PAS DU TOUT</div>
+        </div>
+
+        <div class="secondary-tags hidden">
+            <!-- Les tags secondaires seront affichés ici -->
+        </div>
+
+        <textarea id="custom-text" placeholder="Tu veux t'exprimer ?"></textarea>
+
+        <button onclick="sendResponse()">Envoyer</button>
+        <button class="reset-button" onclick="resetAll()">Retour</button>
+    </div>
+
+    <script>
+        let mainTag = "";
+        const secondaryTags = {
+            "Super !": ["Super journée", "Amusé", "Énergique", "Heureux(se)", "Reconnaissant(e)"],
+            "Ça va": ["Tranquille", "Posé(e)", "Fatigué(e)", "Serein(e)", "Calme"],
+            "Neutre": ["Indifférent(e)", "Rien de spécial", "Stable", "Sans émotion", "Normal"],
+            "Ça va pas trop": ["Fatigué(e)", "Irrité(e)", "Anxieux(se)", "Mal à l’aise", "Tendu(e)"],
+            "Ça va pas du tout": ["Vide", "Mal", "Triste", "J’ai mal au cœur", "Déprimé(e)"]
+        };
+
+        function selectCategory(tagElement, tagValue) {
+            const tagContainer = document.querySelector('.tags');
+            const container = document.querySelector('.secondary-tags');
+            const textArea = document.getElementById('custom-text');
+            
+            if (mainTag === tagValue) {
+                // Désélectionner
+                mainTag = "";
+                tagElement.classList.remove('selected');
+                container.innerHTML = "";
+                container.classList.add('hidden');
+                textArea.classList.remove('visible');
+                document.querySelectorAll('.tags .tag').forEach(tag => tag.classList.remove('hidden'));
+            } else {
+                // Sélectionner une catégorie principale
+                mainTag = tagValue;
+                document.querySelectorAll('.tags .tag').forEach(tag => {
+                    if (tag.textContent !== tagValue) tag.classList.add('hidden');
+                    else tag.classList.add('selected');
+                });
+                textArea.classList.add('visible');
+                showSecondaryTags(tagValue);
+            }
+        }
+
+        function showSecondaryTags(tagValue) {
+            const container = document.querySelector('.secondary-tags');
+            container.innerHTML = ""; // Réinitialiser les tags secondaires
+            container.classList.remove('hidden');
+            secondaryTags[tagValue].forEach(subTag => {
+                const tag = document.createElement('div');
+                tag.className = "tag";
+                tag.textContent = subTag;
+                tag.onclick = () => toggleTag(tag);
+                container.appendChild(tag);
+            });
+        }
+
+        function toggleTag(tagElement) {
+            tagElement.classList.toggle('selected');
+        }
+
+        function resetAll() {
+            mainTag = "";
+            document.querySelectorAll('.tags .tag').forEach(tag => {
+                tag.classList.remove('selected', 'hidden');
+            });
+            document.querySelector('.secondary-tags').innerHTML = "";
+            document.querySelector('.secondary-tags').classList.add('hidden');
+            document.getElementById('custom-text').classList.remove('visible');
+            document.getElementById('custom-text').value = "";
+        }
+
+        function sendResponse() {
+            const profile = document.querySelector('input[name="profile"]:checked');
+            if (!profile) {
+                alert("Veuillez sélectionner un profil (Léa ou Thyann).");
+                return;
+            }
+
+            if (!mainTag) {
+                alert("Veuillez sélectionner une humeur principale.");
+                return;
+            }
+
+            const selectedTags = Array.from(document.querySelectorAll('.secondary-tags .tag.selected')).map(tag => tag.textContent);
+            const customText = document.getElementById('custom-text').value;
+            const profileName = profile.value;
+            const phoneNumber = profileName === "Thyann" ? "0609426150" : "0603651745";
+
+            const message = `J'ai sélectionné : ${mainTag}\n- ${selectedTags.join('\n- ') || "Aucun"}\n\n${customText}\n\nBisous, ${profileName}`;
+            window.location.href = `sms:${phoneNumber}?body=${encodeURIComponent(message)}`;
+        }
+    </script>
+</body>
+</html>

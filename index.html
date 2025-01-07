@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Journal de Santé Mentale</title>
+    <title>Mood Selector</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background: #f5f5f5;
+            background-color: #f4f4f9;
             margin: 0;
             padding: 0;
             display: flex;
@@ -15,216 +15,175 @@
             align-items: center;
             height: 100vh;
         }
+        .main-container {
+            display: flex;
+            gap: 20px;
+        }
         .container {
-            background: #ffffff;
-            padding: 20px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-            max-width: 400px;
             text-align: center;
-            position: relative;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .recipient-container {
+            width: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+        }
+        .recipient button {
+            margin: 10px 0;
+            width: 150px;
+            height: 40px;
+            border-radius: 8px;
+        }
+        .mood-container {
+            width: 500px;
         }
         h1 {
-            font-size: 24px;
             color: #333;
         }
-        h2 {
-            font-size: 20px;
-            color: #555;
-            margin-bottom: 15px;
-        }
-        .profile-selection {
-            display: flex;
-            justify-content: space-around;
-            margin-bottom: 20px;
-        }
-        .profile {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .profile input[type="radio"] {
-            transform: scale(1.5);
-        }
-        .profile label {
-            font-size: 18px;
-            font-weight: bold;
-        }
-        .tags, .secondary-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin: 20px 0;
-            justify-content: center;
-        }
-        .tag {
-            background: #e0e0e0;
-            padding: 10px 20px;
-            border-radius: 20px;
-            cursor: pointer;
-        }
-        .tag.selected {
-            background: #007BFF;
-            color: #fff;
+        .category, .tags {
+            margin: 15px 0;
         }
         button {
-            background: #4caf50;
-            color: #fff;
-            border: none;
+            margin: 5px;
             padding: 10px 20px;
-            border-radius: 5px;
+            border: none;
+            border-radius: 8px;
+            background-color: #f0f0f0;
+            color: #333;
             cursor: pointer;
+            width: 150px;
+            height: 40px;
         }
         button:hover {
-            background: #45a049;
+            background-color: #ddd;
         }
-        .hidden {
+        button.selected {
+            background-color: #28a745; /* Green when selected */
+        }
+        #tags-section {
             display: none;
         }
-        .reset-button {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            background: #FF5733;
+        .back-button {
+            background-color: #dc3545;
             color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
         }
-        .reset-button:hover {
-            background: #e74c3c;
+        .back-button:hover {
+            background-color: #b02a37;
         }
-        textarea {
-            width: 100%;
-            padding: 10px;
-            margin-top: 20px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            resize: none;
-            display: none;
+        .recipient.selected {
+            color: white;
         }
-        textarea.visible {
-            display: block;
+        #Thyann.selected {
+            background-color: #007BFF; /* Blue for Thyann */
+        }
+        #Léa.selected {
+            background-color: #7f00ff; /* Violet for Léa */
         }
     </style>
-</head>
-<body>
-    <div class="container">
-        <h1>Comment te sens-tu aujourd'hui ?</h1>
-        <h2>Qui est-ce ?</h2>
-        <div class="profile-selection">
-            <div class="profile">
-                <input type="radio" id="lea" name="profile" value="Léa">
-                <label for="lea" style="color: #FF69B4;">Léa</label>
-            </div>
-            <div class="profile">
-                <input type="radio" id="thyann" name="profile" value="Thyann">
-                <label for="thyann" style="color: #007BFF;">Thyann</label>
-            </div>
-        </div>
-
-        <div class="tags">
-            <div class="tag" onclick="selectCategory(this, 'Super !')">SUPER !</div>
-            <div class="tag" onclick="selectCategory(this, 'Ça va')">ÇA VA</div>
-            <div class="tag" onclick="selectCategory(this, 'Neutre')">NEUTRE</div>
-            <div class="tag" onclick="selectCategory(this, 'Ça va pas trop')">ÇA VA PAS TROP</div>
-            <div class="tag" onclick="selectCategory(this, 'Ça va pas du tout')">ÇA VA PAS DU TOUT</div>
-        </div>
-
-        <div class="secondary-tags hidden">
-            <!-- Les tags secondaires seront affichés ici -->
-        </div>
-
-        <textarea id="custom-text" placeholder="Tu veux t'exprimer ?"></textarea>
-
-        <button onclick="sendResponse()">Envoyer</button>
-        <button class="reset-button" onclick="resetAll()">Retour</button>
-    </div>
-
     <script>
-        let mainTag = "";
-        const secondaryTags = {
-            "Super !": ["Super journée", "Amusé", "Énergique", "Heureux(se)", "Reconnaissant(e)"],
-            "Ça va": ["Tranquille", "Posé(e)", "Fatigué(e)", "Serein(e)", "Calme"],
-            "Neutre": ["Indifférent(e)", "Rien de spécial", "Stable", "Sans émotion", "Normal"],
-            "Ça va pas trop": ["Fatigué(e)", "Irrité(e)", "Anxieux(se)", "Mal à l’aise", "Tendu(e)"],
-            "Ça va pas du tout": ["Vide", "Mal", "Triste", "J’ai mal au cœur", "Déprimé(e)"]
+        let selectedRecipient = '';
+        let selectedCategory = '';
+        const tagsByCategory = {
+            "Je me sens super": ["Énergique", "Heureux", "Optimiste", "Motivé", "Enthousiaste", "Ravi", "Satisfait", "Inspiré", "Confiant", "Vivifiant"],
+            "Je me sens bien": ["Calme", "Content", "Positif", "Serein", "Détendu", "Reconnaissant", "Équilibré", "Confortable", "Plaisant", "Réconforté"],
+            "Neutre": ["Rien à signaler", "Normal", "Stable", "Indifférent", "Inexpressif", "Plat", "Stoïque", "Habituel", "Sans émotion", "Moyen"],
+            "Pas très bien": ["Fatigué", "Stressé", "Préoccupé", "Émotif", "Irritable", "Confus", "Inquiet", "Pessimiste", "Dépassé", "Tendu"],
+            "Mal": ["Déprimé", "Anxieux", "En colère", "Triste", "Écrasé", "Vide", "Honteux", "Désespéré", "Isolé", "Vulnérable"]
         };
 
-        function selectCategory(tagElement, tagValue) {
-            const tagContainer = document.querySelector('.tags');
-            const container = document.querySelector('.secondary-tags');
-            const textArea = document.getElementById('custom-text');
-            
-            if (mainTag === tagValue) {
-                // Désélectionner
-                mainTag = "";
-                tagElement.classList.remove('selected');
-                container.innerHTML = "";
-                container.classList.add('hidden');
-                textArea.classList.remove('visible');
-                document.querySelectorAll('.tags .tag').forEach(tag => tag.classList.remove('hidden'));
+        function selectRecipient(name) {
+            if (selectedRecipient === name) {
+                selectedRecipient = '';
+                document.getElementById(name).classList.remove('selected');
             } else {
-                // Sélectionner une catégorie principale
-                mainTag = tagValue;
-                document.querySelectorAll('.tags .tag').forEach(tag => {
-                    if (tag.textContent !== tagValue) tag.classList.add('hidden');
-                    else tag.classList.add('selected');
-                });
-                textArea.classList.add('visible');
-                showSecondaryTags(tagValue);
+                if (selectedRecipient) {
+                    document.getElementById(selectedRecipient).classList.remove('selected');
+                }
+                selectedRecipient = name;
+                document.getElementById(name).classList.add('selected');
             }
         }
 
-        function showSecondaryTags(tagValue) {
-            const container = document.querySelector('.secondary-tags');
-            container.innerHTML = ""; // Réinitialiser les tags secondaires
-            container.classList.remove('hidden');
-            secondaryTags[tagValue].forEach(subTag => {
-                const tag = document.createElement('div');
-                tag.className = "tag";
-                tag.textContent = subTag;
-                tag.onclick = () => toggleTag(tag);
-                container.appendChild(tag);
+        function selectCategory(category) {
+            selectedCategory = category;
+            showTags();
+        }
+
+        function showTags() {
+            document.getElementById('categories-section').style.display = 'none';
+            document.getElementById('tags-section').style.display = 'block';
+            const tagsContainer = document.querySelector('.tags');
+            tagsContainer.innerHTML = `<p>Choisissez un ou plusieurs mots pour décrire votre état :</p>`;
+            tagsByCategory[selectedCategory].forEach(tag => {
+                const button = document.createElement('button');
+                button.textContent = tag;
+                button.onclick = function () {
+                    toggleTag(button);
+                };
+                tagsContainer.appendChild(button);
             });
         }
 
-        function toggleTag(tagElement) {
-            tagElement.classList.toggle('selected');
-        }
+        function sendMessage() {
+            const tags = Array.from(document.querySelectorAll('.tags button.selected')).map(button => button.innerText);
+            const recipientNumber = selectedRecipient === 'Thyann' ? '06 09 42 61 50' : (selectedRecipient === 'Léa' ? '06 03 65 17 45' : '');
 
-        function resetAll() {
-            mainTag = "";
-            document.querySelectorAll('.tags .tag').forEach(tag => {
-                tag.classList.remove('selected', 'hidden');
-            });
-            document.querySelector('.secondary-tags').innerHTML = "";
-            document.querySelector('.secondary-tags').classList.add('hidden');
-            document.getElementById('custom-text').classList.remove('visible');
-            document.getElementById('custom-text').value = "";
-        }
-
-        function sendResponse() {
-            const profile = document.querySelector('input[name="profile"]:checked');
-            if (!profile) {
-                alert("Veuillez sélectionner un profil (Léa ou Thyann).");
+            if (!selectedRecipient) {
+                alert('Veuillez sélectionner une personne dans le menu à gauche.');
                 return;
             }
 
-            if (!mainTag) {
-                alert("Veuillez sélectionner une humeur principale.");
-                return;
-            }
+            const message = `Coucou,\nJe me sens : ${selectedCategory}.\n- ${tags.join('\n- ')}\n\nBisous, ${selectedRecipient}`;
+            alert(`Envoyer à ${recipientNumber} :\n\n${message}`);
+        }
 
-            const selectedTags = Array.from(document.querySelectorAll('.secondary-tags .tag.selected')).map(tag => tag.textContent);
-            const customText = document.getElementById('custom-text').value;
-            const profileName = profile.value;
-            const phoneNumber = profileName === "Thyann" ? "0609426150" : "0603651745";
+        function toggleTag(button) {
+            button.classList.toggle('selected');
+        }
 
-            const message = `J'ai sélectionné : ${mainTag}\n- ${selectedTags.join('\n- ') || "Aucun"}\n\n${customText}\n\nBisous, ${profileName}`;
-            window.location.href = `sms:${phoneNumber}?body=${encodeURIComponent(message)}`;
+        function goBack() {
+            document.getElementById('tags-section').style.display = 'none';
+            document.getElementById('categories-section').style.display = 'block';
+            // Remove all selected tags
+            document.querySelectorAll('.tags button.selected').forEach(button => button.classList.remove('selected'));
         }
     </script>
+</head>
+<body>
+    <div class="main-container">
+        <div class="container recipient-container">
+            <h2>Qui es-tu ?</h2>
+            <button id="Thyann" class="recipient" onclick="selectRecipient('Thyann')">Thyann</button>
+            <button id="Léa" class="recipient" onclick="selectRecipient('Léa')">Léa</button>
+        </div>
+
+        <div class="container mood-container">
+            <h1>Comment vous sentez-vous aujourd'hui ?</h1>
+
+            <div id="categories-section">
+                <div class="category">
+                    <p>Sélectionnez votre humeur :</p>
+                    <button onclick="selectCategory('Je me sens super')">Je me sens super</button>
+                    <button onclick="selectCategory('Je me sens bien')">Je me sens bien</button>
+                    <button onclick="selectCategory('Neutre')">Neutre</button>
+                    <button onclick="selectCategory('Pas très bien')">Pas très bien</button>
+                    <button onclick="selectCategory('Mal')">Mal</button>
+                </div>
+            </div>
+
+            <div id="tags-section">
+                <div class="tags">
+                    <p>Choisissez un ou plusieurs mots pour décrire votre état :</p>
+                </div>
+                <button onclick="goBack()" class="back-button">Retour</button>
+                <button onclick="sendMessage()">Envoyer</button>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

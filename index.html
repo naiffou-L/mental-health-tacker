@@ -68,28 +68,8 @@
         button:hover {
             background-color: #ddd;
         }
-        .thyann-tag.selected {
-            background-color: #007BFF; /* Bleu pour Thyann */
-            color: white;
-        }
-        .léa-tag.selected {
-            background-color: #7f00ff; /* Violet pour Léa */
-            color: white;
-        }
-        #tags-section {
-            display: none;
-        }
-        textarea {
-            width: 100%;
-            max-width: 500px;
-            height: 80px;
-            margin-top: 15px;
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            font-size: 1rem;
-            resize: none;
-            box-sizing: border-box;
+        button.selected {
+            background-color: #28a745; /* Default green */
         }
         .back-button {
             background-color: #dc3545;
@@ -98,11 +78,45 @@
         .back-button:hover {
             background-color: #b02a37;
         }
+        .recipient.selected {
+            color: white;
+        }
         #Thyann.selected {
-            background-color: #007BFF; /* Bleu pour Thyann */
+            background-color: #007BFF; /* Blue for Thyann */
         }
         #Léa.selected {
-            background-color: #7f00ff; /* Violet pour Léa */
+            background-color: #7f00ff; /* Violet for Léa */
+        }
+        .tags button.selected {
+            color: white;
+        }
+        #tags-section {
+            display: none;
+        }
+        .textarea-container {
+            margin: 15px 0;
+        }
+        textarea {
+            width: 100%;
+            max-width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+
+        /* Media Queries for responsiveness */
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+            h1 {
+                font-size: 1.2rem;
+            }
+            button {
+                font-size: 1rem;
+            }
         }
     </style>
     <script>
@@ -142,39 +156,35 @@
             tagsByCategory[selectedCategory].forEach(tag => {
                 const button = document.createElement('button');
                 button.textContent = tag;
-                button.className = selectedRecipient === 'Thyann' ? 'thyann-tag' : 'léa-tag';
                 button.onclick = function () {
-                    button.classList.toggle('selected');
+                    toggleTag(button);
                 };
                 tagsContainer.appendChild(button);
             });
         }
 
-        function goBack() {
-            document.getElementById('tags-section').style.display = 'none';
-            document.getElementById('categories-section').style.display = 'block';
-        }
-
         function sendMessage() {
             const tags = Array.from(document.querySelectorAll('.tags button.selected')).map(button => button.innerText);
-            const customMessage = document.getElementById('custom-message').value.trim();
-            const recipientNumber = selectedRecipient === 'Thyann' ? '0609426150' : (selectedRecipient === 'Léa' ? '0603651745' : '');
+            const customMessage = document.getElementById('custom-message').value;
+            const recipientNumber = selectedRecipient === 'Thyann' ? 'sms:0609426150' : (selectedRecipient === 'Léa' ? 'sms:0603651745' : '');
 
             if (!selectedRecipient) {
-                alert('Veuillez sélectionner une personne.');
+                alert('Veuillez sélectionner une personne dans le menu à gauche.');
                 return;
             }
 
-            let message = `Coucou,\nJe me sens : ${selectedCategory}.\n- ${tags.join('\n- ')}`;
-            if (customMessage) {
-                message += `\n\n${customMessage}`;
-            }
+            const message = `Coucou,\nJe me sens : ${selectedCategory}.\n- ${tags.join('\n- ')}\n\n${customMessage ? customMessage + '\n\n' : ''}Bisous, ${selectedRecipient}`;
+            window.location.href = `${recipientNumber}?body=${encodeURIComponent(message)}`;
+        }
 
-            // Encodage du message
-            message = encodeURIComponent(message);
+        function toggleTag(button) {
+            button.classList.toggle('selected');
+        }
 
-            // Ouvrir l'application Messages avec le message pré-rempli
-            window.location.href = `sms:${recipientNumber}?body=${message}`;
+        function goBack() {
+            document.getElementById('tags-section').style.display = 'none';
+            document.getElementById('categories-section').style.display = 'block';
+            document.querySelectorAll('.tags button.selected').forEach(button => button.classList.remove('selected'));
         }
     </script>
 </head>
@@ -204,7 +214,9 @@
                 <div class="tags">
                     <p>Choisissez un ou plusieurs mots pour décrire votre état :</p>
                 </div>
-                <textarea id="custom-message" placeholder="Quelque chose à dire ?"></textarea>
+                <div class="textarea-container">
+                    <textarea id="custom-message" placeholder="Quelque chose à dire ?"></textarea>
+                </div>
                 <button onclick="goBack()" class="back-button">Retour</button>
                 <button onclick="sendMessage()">Envoyer</button>
             </div>

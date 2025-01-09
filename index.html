@@ -68,9 +68,6 @@
         button:hover {
             background-color: #ddd;
         }
-        button.selected {
-            background-color: transparent; /* Pas de couleur verte par défaut */
-        }
         .thyann-tag.selected {
             background-color: #007BFF; /* Bleu pour Thyann */
             color: white;
@@ -89,27 +86,11 @@
         .back-button:hover {
             background-color: #b02a37;
         }
-        .recipient.selected {
-            color: white;
-        }
         #Thyann.selected {
             background-color: #007BFF; /* Bleu pour Thyann */
         }
         #Léa.selected {
             background-color: #7f00ff; /* Violet pour Léa */
-        }
-
-        /* Media Queries for responsiveness */
-        @media (max-width: 600px) {
-            .container {
-                padding: 15px;
-            }
-            h1 {
-                font-size: 1.2rem;
-            }
-            button {
-                font-size: 1rem;
-            }
         }
     </style>
     <script>
@@ -127,32 +108,13 @@
             if (selectedRecipient === name) {
                 selectedRecipient = '';
                 document.getElementById(name).classList.remove('selected');
-                resetTagsColor();
             } else {
                 if (selectedRecipient) {
                     document.getElementById(selectedRecipient).classList.remove('selected');
                 }
                 selectedRecipient = name;
                 document.getElementById(name).classList.add('selected');
-                updateTagsColor(name);
             }
-        }
-
-        function updateTagsColor(name) {
-            const tagsContainer = document.querySelector('.tags');
-            const buttons = tagsContainer.querySelectorAll('button');
-            
-            buttons.forEach(button => {
-                // Remove previous color class
-                button.classList.remove('thyann-tag', 'léa-tag');
-                
-                // Add the correct color class based on the selected recipient
-                if (name === 'Thyann') {
-                    button.classList.add('thyann-tag');
-                } else if (name === 'Léa') {
-                    button.classList.add('léa-tag');
-                }
-            });
         }
 
         function selectCategory(category) {
@@ -168,43 +130,34 @@
             tagsByCategory[selectedCategory].forEach(tag => {
                 const button = document.createElement('button');
                 button.textContent = tag;
+                button.className = selectedRecipient === 'Thyann' ? 'thyann-tag' : 'léa-tag';
                 button.onclick = function () {
-                    toggleTag(button);
+                    button.classList.toggle('selected');
                 };
                 tagsContainer.appendChild(button);
             });
         }
 
-        function toggleTag(button) {
-            // Add the selected class to the tag, based on the recipient's color
-            if (selectedRecipient === 'Thyann') {
-                button.classList.add('thyann-tag');
-            } else if (selectedRecipient === 'Léa') {
-                button.classList.add('léa-tag');
-            }
-
-            // Toggle the 'selected' class to indicate if it's selected
-            button.classList.toggle('selected');
-        }
-
         function goBack() {
             document.getElementById('tags-section').style.display = 'none';
             document.getElementById('categories-section').style.display = 'block';
-            // Remove all selected tags
-            document.querySelectorAll('.tags button.selected').forEach(button => button.classList.remove('selected'));
         }
 
         function sendMessage() {
             const tags = Array.from(document.querySelectorAll('.tags button.selected')).map(button => button.innerText);
-            const recipientNumber = selectedRecipient === 'Thyann' ? '06 09 42 61 50' : (selectedRecipient === 'Léa' ? '06 03 65 17 45' : '');
+            const recipientNumber = selectedRecipient === 'Thyann' ? '0609426150' : (selectedRecipient === 'Léa' ? '0603651745' : '');
 
             if (!selectedRecipient) {
-                alert('Veuillez sélectionner une personne dans le menu à gauche.');
+                alert('Veuillez sélectionner une personne.');
                 return;
             }
 
-            const message = `Coucou,\nJe me sens : ${selectedCategory}.\n- ${tags.join('\n- ')}\n\nBisous, ${selectedRecipient}`;
-            alert(`Envoyer à ${recipientNumber} :\n\n${message}`);
+            const message = encodeURIComponent(
+                `Coucou,\nJe me sens : ${selectedCategory}.\n- ${tags.join('\n- ')}\n\nBisous, ${selectedRecipient}`
+            );
+
+            // Ouvrir l'application Messages avec le message pré-rempli
+            window.location.href = `sms:${recipientNumber}?body=${message}`;
         }
     </script>
 </head>

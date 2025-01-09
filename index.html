@@ -79,6 +79,18 @@
         #tags-section {
             display: none;
         }
+        textarea {
+            width: 100%;
+            max-width: 500px;
+            height: 80px;
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 1rem;
+            resize: none;
+            box-sizing: border-box;
+        }
         .back-button {
             background-color: #dc3545;
             color: white;
@@ -145,6 +157,7 @@
 
         function sendMessage() {
             const tags = Array.from(document.querySelectorAll('.tags button.selected')).map(button => button.innerText);
+            const customMessage = document.getElementById('custom-message').value.trim();
             const recipientNumber = selectedRecipient === 'Thyann' ? '0609426150' : (selectedRecipient === 'Léa' ? '0603651745' : '');
 
             if (!selectedRecipient) {
@@ -152,9 +165,13 @@
                 return;
             }
 
-            const message = encodeURIComponent(
-                `Coucou,\nJe me sens : ${selectedCategory}.\n- ${tags.join('\n- ')}\n\nBisous, ${selectedRecipient}`
-            );
+            let message = `Coucou,\nJe me sens : ${selectedCategory}.\n- ${tags.join('\n- ')}`;
+            if (customMessage) {
+                message += `\n\n${customMessage}`;
+            }
+
+            // Encodage du message
+            message = encodeURIComponent(message);
 
             // Ouvrir l'application Messages avec le message pré-rempli
             window.location.href = `sms:${recipientNumber}?body=${message}`;
@@ -187,6 +204,7 @@
                 <div class="tags">
                     <p>Choisissez un ou plusieurs mots pour décrire votre état :</p>
                 </div>
+                <textarea id="custom-message" placeholder="Quelque chose à dire ?"></textarea>
                 <button onclick="goBack()" class="back-button">Retour</button>
                 <button onclick="sendMessage()">Envoyer</button>
             </div>

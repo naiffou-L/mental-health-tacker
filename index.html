@@ -19,33 +19,40 @@
             display: flex;
             flex-direction: column; /* Stack the blocks vertically */
             align-items: center; /* Center horizontally */
-            gap: 20px;
+            gap: 15px;
+            padding: 10px;
+            width: 100%;
+            max-width: 400px; /* Limit the width for mobile */
         }
         .container {
             text-align: center;
             background: white;
-            padding: 20px;
+            padding: 15px;
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
         }
         .recipient-container {
-            width: 200px;
+            width: 100%;
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
             align-items: center;
         }
         .recipient button {
-            margin: 10px 0;
-            width: 150px;
+            margin: 8px 0;
+            width: 100%;
+            max-width: 300px;
             height: 40px;
             border-radius: 8px;
+            font-size: 16px;
         }
         .mood-container {
-            width: 500px;
+            width: 100%;
         }
         h1 {
             color: #333;
+            font-size: 20px;
         }
         .category, .tags {
             margin: 15px 0;
@@ -58,8 +65,10 @@
             background-color: #f0f0f0;
             color: #333;
             cursor: pointer;
-            width: 150px;
+            width: 100%;
+            max-width: 300px;
             height: 40px;
+            font-size: 16px;
         }
         button:hover {
             background-color: #ddd;
@@ -85,6 +94,22 @@
         }
         #Léa.selected {
             background-color: #7f00ff; /* Violet for Léa */
+        }
+
+        /* Media Query for smaller screens (mobile) */
+        @media (max-width: 600px) {
+            .container {
+                padding: 12px;
+            }
+            h1 {
+                font-size: 18px;
+            }
+            .recipient button {
+                font-size: 14px;
+            }
+            button {
+                font-size: 14px;
+            }
         }
     </style>
     <script>

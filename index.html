@@ -17,6 +17,8 @@
         }
         .main-container {
             display: flex;
+            flex-direction: column; /* Stack the blocks vertically */
+            align-items: center; /* Center horizontally */
             gap: 20px;
         }
         .container {
@@ -156,6 +158,12 @@
 </head>
 <body>
     <div class="main-container">
+        <div class="container recipient-container">
+            <h2>Qui es-tu ?</h2>
+            <button id="Thyann" class="recipient" onclick="selectRecipient('Thyann')">Thyann</button>
+            <button id="Léa" class="recipient" onclick="selectRecipient('Léa')">Léa</button>
+        </div>
+
         <div class="container mood-container">
             <h1>Comment vous sentez-vous aujourd'hui ?</h1>
 
@@ -177,12 +185,6 @@
                 <button onclick="goBack()" class="back-button">Retour</button>
                 <button onclick="sendMessage()">Envoyer</button>
             </div>
-        </div>
-
-        <div class="container recipient-container">
-            <h2>Qui es-tu ?</h2>
-            <button id="Thyann" class="recipient" onclick="selectRecipient('Thyann')">Thyann</button>
-            <button id="Léa" class="recipient" onclick="selectRecipient('Léa')">Léa</button>
         </div>
     </div>
 </body>

@@ -1,54 +1,54 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mood Selector</title>
+    <title>🎉 Mood d'anniversaire 🎉</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
+            background-color: #ffe6f0; /* Rose clair */
             margin: 0;
             padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            box-sizing: border-box;
         }
         .main-container {
             display: flex;
-            flex-direction: column;
             gap: 20px;
-            max-width: 100%;
-            padding: 15px;
         }
         .container {
             text-align: center;
             background: white;
             padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            width: 100%;
+            border-radius: 15px;
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
         }
         .recipient-container {
+            width: 200px;
             display: flex;
             flex-direction: column;
+            justify-content: flex-start;
             align-items: center;
         }
         .recipient button {
             margin: 10px 0;
-            width: 100%;
-            max-width: 250px;
+            width: 150px;
             height: 40px;
             border-radius: 8px;
+            font-weight: bold;
+            background-color: #ffd1dc;
         }
         .mood-container {
-            width: 100%;
+            width: 500px;
         }
         h1 {
-            color: #333;
-            font-size: 1.4rem;
+            color: #e91e63;
+        }
+        h2 {
+            color: #ff69b4;
         }
         .category, .tags {
             margin: 15px 0;
@@ -58,18 +58,22 @@
             padding: 10px 20px;
             border: none;
             border-radius: 8px;
-            background-color: #f0f0f0;
+            background-color: #fce4ec;
             color: #333;
             cursor: pointer;
-            width: 100%;
-            max-width: 250px;
+            width: 150px;
             height: 40px;
+            font-weight: bold;
         }
         button:hover {
-            background-color: #ddd;
+            background-color: #f8bbd0;
         }
         button.selected {
-            background-color: #28a745; /* Default green */
+            background-color: #ff4081; /* Rose vif quand sélectionné */
+            color: white;
+        }
+        #tags-section {
+            display: none;
         }
         .back-button {
             background-color: #dc3545;
@@ -82,52 +86,21 @@
             color: white;
         }
         #Thyann.selected {
-            background-color: #007BFF; /* Blue for Thyann */
+            background-color: #ff80ab; /* Rose vif pour Thyann */
         }
         #Léa.selected {
-            background-color: #7f00ff; /* Violet for Léa */
-        }
-        .tags button.selected {
-            color: white;
-        }
-        #tags-section {
-            display: none;
-        }
-        .textarea-container {
-            margin: 15px 0;
-        }
-        textarea {
-            width: 100%;
-            max-width: 100%;
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            font-size: 1rem;
-            box-sizing: border-box;
-        }
-
-        /* Media Queries for responsiveness */
-        @media (max-width: 600px) {
-            .container {
-                padding: 15px;
-            }
-            h1 {
-                font-size: 1.2rem;
-            }
-            button {
-                font-size: 1rem;
-            }
+            background-color: #ba68c8; /* Violet doux pour Léa */
         }
     </style>
     <script>
         let selectedRecipient = '';
         let selectedCategory = '';
         const tagsByCategory = {
-            "Je me sens super": ["Énergique", "Heureux", "Optimiste", "Motivé", "Enthousiaste", "Ravi", "Satisfait", "Inspiré", "Confiant", "Vivifiant"],
-            "Je me sens bien": ["Calme", "Content", "Positif", "Serein", "Détendu", "Reconnaissant", "Équilibré", "Confortable", "Plaisant", "Réconforté"],
-            "Neutre": ["Rien à signaler", "Normal", "Stable", "Indifférent", "Inexpressif", "Plat", "Stoïque", "Habituel", "Sans émotion", "Moyen"],
-            "Pas très bien": ["Fatigué", "Stressé", "Préoccupé", "Émotif", "Irritable", "Confus", "Inquiet", "Pessimiste", "Dépassé", "Tendu"],
-            "Mal": ["Déprimé", "Anxieux", "En colère", "Triste", "Écrasé", "Vide", "Honteux", "Désespéré", "Isolé", "Vulnérable"]
+            "Je me sens super": ["🎈 Énergique", "😄 Heureux", "🌞 Optimiste", "🚀 Motivé", "🎉 Enthousiaste", "😍 Ravi", "😌 Satisfait", "✨ Inspiré", "💪 Confiant", "🌈 Vivifiant"],
+            "Je me sens bien": ["🌼 Calme", "🙂 Content", "👍 Positif", "🧘 Serein", "😌 Détendu", "🙏 Reconnaissant", "⚖️ Équilibré", "🛋️ Confortable", "😊 Plaisant", "💖 Réconforté"],
+            "Neutre": ["😐 Rien à signaler", "😶 Normal", "🧍 Stable", "🤷 Indifférent", "😑 Inexpressif", "🫥 Plat", "🧊 Stoïque", "📅 Habituel", "😶‍🌫️ Sans émotion", "➗ Moyen"],
+            "Pas très bien": ["😩 Fatigué", "😬 Stressé", "🤯 Préoccupé", "🥺 Émotif", "😠 Irritable", "😕 Confus", "😟 Inquiet", "☁️ Pessimiste", "🤹 Dépassé", "😖 Tendu"],
+            "Mal": ["😞 Déprimé", "😰 Anxieux", "😡 En colère", "😢 Triste", "😓 Écrasé", "🥀 Vide", "😳 Honteux", "💔 Désespéré", "🚪 Isolé", "😔 Vulnérable"]
         };
 
         function selectRecipient(name) {
@@ -152,7 +125,7 @@
             document.getElementById('categories-section').style.display = 'none';
             document.getElementById('tags-section').style.display = 'block';
             const tagsContainer = document.querySelector('.tags');
-            tagsContainer.innerHTML = `<p>Choisissez un ou plusieurs mots pour décrire votre état :</p>`;
+            tagsContainer.innerHTML = `<p>🎂 Choisissez un ou plusieurs mots pour décrire votre état :</p>`;
             tagsByCategory[selectedCategory].forEach(tag => {
                 const button = document.createElement('button');
                 button.textContent = tag;
@@ -165,16 +138,15 @@
 
         function sendMessage() {
             const tags = Array.from(document.querySelectorAll('.tags button.selected')).map(button => button.innerText);
-            const customMessage = document.getElementById('custom-message').value;
-            const recipientNumber = selectedRecipient === 'Thyann' ? 'sms:0609426150' : (selectedRecipient === 'Léa' ? 'sms:0603651745' : '');
+            const recipientNumber = selectedRecipient === 'Thyann' ? '06 09 42 61 50' : (selectedRecipient === 'Léa' ? '06 03 65 17 45' : '');
 
             if (!selectedRecipient) {
-                alert('Veuillez sélectionner une personne dans le menu à gauche.');
+                alert('🎈 Veuillez sélectionner une personne dans le menu à gauche.');
                 return;
             }
 
-            const message = `Coucou,\nJe me sens : ${selectedCategory}.\n- ${tags.join('\n- ')}\n\n${customMessage ? customMessage + '\n\n' : ''}Bisous, ${selectedRecipient}`;
-            window.location.href = `${recipientNumber}?body=${encodeURIComponent(message)}`;
+            const message = `🎉 Coucou,\nJe me sens : ${selectedCategory}.\n- ${tags.join('\n- ')}\n\nBisous, ${selectedRecipient}`;
+            alert(`🎁 Envoyer à ${recipientNumber} :\n\n${message}`);
         }
 
         function toggleTag(button) {
@@ -191,17 +163,17 @@
 <body>
     <div class="main-container">
         <div class="container recipient-container">
-            <h2>Qui es-tu ?</h2>
+            <h2>🎈 Qui fête aujourd'hui ?</h2>
             <button id="Thyann" class="recipient" onclick="selectRecipient('Thyann')">Thyann</button>
             <button id="Léa" class="recipient" onclick="selectRecipient('Léa')">Léa</button>
         </div>
 
         <div class="container mood-container">
-            <h1>Comment vous sentez-vous aujourd'hui ?</h1>
+            <h1>🎂 Comment tu te sens pour ton anniversaire ?</h1>
 
             <div id="categories-section">
                 <div class="category">
-                    <p>Sélectionnez votre humeur :</p>
+                    <p>Choisis ton humeur du jour :</p>
                     <button onclick="selectCategory('Je me sens super')">Je me sens super</button>
                     <button onclick="selectCategory('Je me sens bien')">Je me sens bien</button>
                     <button onclick="selectCategory('Neutre')">Neutre</button>
@@ -211,14 +183,9 @@
             </div>
 
             <div id="tags-section">
-                <div class="tags">
-                    <p>Choisissez un ou plusieurs mots pour décrire votre état :</p>
-                </div>
-                <div class="textarea-container">
-                    <textarea id="custom-message" placeholder="Quelque chose à dire ?"></textarea>
-                </div>
+                <div class="tags"></div>
                 <button onclick="goBack()" class="back-button">Retour</button>
-                <button onclick="sendMessage()">Envoyer</button>
+                <button onclick="sendMessage()">🎈 Envoyer</button>
             </div>
         </div>
     </div>

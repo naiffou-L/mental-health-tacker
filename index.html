@@ -118,7 +118,7 @@
             document.getElementById('categories-section').style.display = 'none';
             document.getElementById('tags-section').style.display = 'block';
             const tagsContainer = document.querySelector('.tags');
-            tagsContainer.innerHTML = `<p>Choisissez un ou plusieurs mots pour décrire votre état :</p>`;
+            tagsContainer.innerHTML = '<p>Choisissez un ou plusieurs mots pour décrire votre état :</p>';
             tagsByCategory[selectedCategory].forEach(tag => {
                 const button = document.createElement('button');
                 button.textContent = tag;
@@ -156,12 +156,6 @@
 </head>
 <body>
     <div class="main-container">
-        <div class="container recipient-container">
-            <h2>Qui es-tu ?</h2>
-            <button id="Thyann" class="recipient" onclick="selectRecipient('Thyann')">Thyann</button>
-            <button id="Léa" class="recipient" onclick="selectRecipient('Léa')">Léa</button>
-        </div>
-
         <div class="container mood-container">
             <h1>Comment vous sentez-vous aujourd'hui ?</h1>
 
@@ -183,6 +177,12 @@
                 <button onclick="goBack()" class="back-button">Retour</button>
                 <button onclick="sendMessage()">Envoyer</button>
             </div>
+        </div>
+
+        <div class="container recipient-container">
+            <h2>Qui es-tu ?</h2>
+            <button id="Thyann" class="recipient" onclick="selectRecipient('Thyann')">Thyann</button>
+            <button id="Léa" class="recipient" onclick="selectRecipient('Léa')">Léa</button>
         </div>
     </div>
 </body>
